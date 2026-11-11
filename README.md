@@ -35,7 +35,28 @@ bids.
 
 ## Screenshots
 
-_Screenshots are being prepared and will be added here._
+These are captures of the running web app with sample data. A script in the
+private repository seeds a demo account and takes them, so every listing,
+price and comparable sale shown here is invented for the demo.
+
+**The morning shortlist.** Each pick shows its current price, the appraisal
+from comparable sales, and a suggested ceiling with a rail marking where the
+price sits against it. The last row is flagged because it closes within the
+hour.
+
+![Morning picks: six picks with price, appraisal, suggested ceiling and closing time](assets/morning-picks.png)
+
+**A pick in detail.** Current price, the appraisal range, the suggested
+ceiling on its rail, and the comparable closings the appraisal was computed
+from. The price history marks each observation by where it came from.
+
+![Listing detail: price, appraisal, suggested ceiling, comparable closings and price history](assets/listing-detail.png)
+
+**Hunt profiles.** Ten catalog profiles to switch on and off, with keyword
+lists and a price range per profile, and a preview of what the settings
+would have shown on recent runs.
+
+![Hunt profiles: a grid of ten profiles and the settings panel for one of them](assets/hunt-profiles.png)
 
 ## Architecture
 
@@ -115,18 +136,21 @@ The crawler does three things instead:
 
 1. **It reads closings from category result pages**, which return dozens of
    listings per request, and treats that as the record: title, final price,
-   bid count, end time, seller, category. The logged daily runs take between
-   3,700 and 6,600 requests to cover everything.
+   bid count, end time, seller, category. Before the detail pass was switched
+   on, the logged daily runs took between 3,700 and 6,600 requests to cover
+   everything.
 2. **It fetches detail only where detail earns its cost.** The categories my
    hunt profiles draw on each have a price floor, set from the crawler's own
    closing data. A $4 shirt is never a useful comparable, so it never costs
-   a second request. A $40 camera lens does. The detail pass is budgeted at
-   about 11,000 requests a day.
+   a second request. A $40 camera lens does. With the detail pass running,
+   the three most recent logged runs took 12,098, 19,354 and 19,827 requests
+   in total.
 3. **It never repeats work.** Progress is checkpointed per category and per
    page, so a restart or a power cut resumes at the exact page it stopped on.
 
-That puts a full day at roughly 15,000 to 18,000 requests against 235,000,
-about one request every five seconds averaged over the day.
+That puts a full day at roughly 12,000 to 20,000 requests against 235,000,
+which is 92% to 95% fewer on those three runs, or about one request every
+four to seven seconds averaged over the day.
 
 How the crawler behaves matters as much as how many requests it makes:
 
